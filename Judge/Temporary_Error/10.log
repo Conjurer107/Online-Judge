@@ -1,0 +1,4 @@
+test\10\Code.cpp: In function 'int main()':
+test\10\Code.cpp:33:21: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for (int i = 0; i <= strlen(STRING); i++)
+                     ^

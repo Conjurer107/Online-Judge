@@ -1,0 +1,4 @@
+test\9\Code.cpp: In function 'int main()':
+test\9\Code.cpp:7:34: warning: variable 'n1' set but not used [-Wunused-but-set-variable]
+     int n,m,hour1,visited,min1,i,n1,k,p,hour[20],min[20],visit[20],compare,compare1,compare2;
+                                  ^

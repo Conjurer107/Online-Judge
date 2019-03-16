@@ -1,0 +1,4 @@
+test\12\Code.cpp: In function 'int main()':
+test\12\Code.cpp:34:22: warning: format '%d' expects argument of type 'int*', but argument 2 has type 'long int*' [-Wformat=]
+   scanf("%d", &Num[i]);
+                      ^

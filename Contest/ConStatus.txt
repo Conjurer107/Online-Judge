@@ -1,0 +1,12 @@
+RunID		运行ID
+ConID		比赛ID
+User		用户
+Problem		问题编号
+Status		状态
+UseTime		耗时
+UseMemory	耗用内存
+Language		语言
+CodeLen		代码长度
+SubTime		提交时间
+AllStatus		测试点状态
+Show		是否显示

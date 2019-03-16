@@ -1,0 +1,12 @@
+Title		比赛标题
+Organizer		举办人
+Rule		规则
+Type		比赛类型(Public/Private)
+StartTime		开始时间
+OverTime		结束时间
+EnrollStartTime	报名开始时间
+EnrollOverTime	报名结束时间
+EnrollPeople	参赛人员
+RiskRatio		风险系数
+RatingStatus	战斗力结算状态
+Problem		题目

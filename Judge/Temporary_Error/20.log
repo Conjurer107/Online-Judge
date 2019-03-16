@@ -1,0 +1,16 @@
+test\20\Code.cpp: In function 'int main()':
+test\20\Code.cpp:26:22: warning: format '%s' expects argument of type 'char*', but argument 2 has type 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' [-Wformat=]
+    printf("%s\n", url);
+                      ^
+test\20\Code.cpp:33:26: warning: format '%s' expects argument of type 'char*', but argument 2 has type 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' [-Wformat=]
+     printf("%s\n", a[cnt]);
+                          ^
+test\20\Code.cpp:37:31: warning: too many arguments for format [-Wformat-extra-args]
+     printf("Ignored\n", a[cnt]);
+                               ^
+test\20\Code.cpp:44:31: warning: too many arguments for format [-Wformat-extra-args]
+     printf("Ignored\n", a[cnt]);
+                               ^
+test\20\Code.cpp:49:26: warning: format '%s' expects argument of type 'char*', but argument 2 has type 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' [-Wformat=]
+     printf("%s\n", a[cnt]);
+                          ^

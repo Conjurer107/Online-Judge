@@ -1,0 +1,25 @@
+<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户登录
+        <span class="caret"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu" data-stopPropagation>
+        <form id="loginPanel" action="/Php/LoginCheck.php" method="post" target="myIframeLogin">
+            <div class="input-group">
+                <span class="input-group-addon">用户名</span>
+                <input name="username" type="text" class="form-control">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon">密码：</span>
+                <input name="password" type="password" class="form-control">
+            </div>
+            <center>
+                <button type="submit" name="submit" value="btnLogin" class="btn btn-default">登录</button>
+            </center>
+        </form>
+        <iframe id="myIframe" name="myIframeLogin" style="display:none">登陆中</iframe>
+    </ul>
+</li>
+
+<li> <a href="/Register.php">注册账号 </a> </li>

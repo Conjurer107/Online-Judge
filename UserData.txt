@@ -1,0 +1,13 @@
+name		用户姓名
+uid		用户ID
+password		用户密码
+jurisdicton		权限
+signature		签名
+email		邮箱
+passpblem	通过的题
+npasspblem	未通过的题
+allsubnum		提交总次数
+regtime		注册时间
+logtime		最后登陆的时间
+fight		战斗力
+skin		OJ皮肤

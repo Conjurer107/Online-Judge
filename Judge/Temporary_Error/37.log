@@ -1,0 +1,4 @@
+test\37\Code.cpp: In function 'int main()':
+test\37\Code.cpp:35:40: error: 'setprecision' was not declared in this scope
+             cout<<fixed<<setprecision(2)<<ALL2[i][b]<<" ";
+                                        ^
