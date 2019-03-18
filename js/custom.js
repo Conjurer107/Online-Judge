@@ -18,6 +18,12 @@ $(function () {
 		e.stopPropagation();
 	});
 });
+
+$("#SubmitCodeButton").click(function () {
+	$("#SubmitCodeButton").attr("disabled", "disabled");
+	$("#SubmitCodeButton").val("上传中...");
+});
+
 $("#btnLogin").click(function () {
 	var datt = {};
 	var lgpwd = $("#password").val();
