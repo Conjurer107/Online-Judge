@@ -157,7 +157,8 @@ var codemode = {
 		name: "python",
 		version: 3,
 		singleLineStringErrors: false
-	}
+	},
+	'Python': "text/x-java"
 };
 $("#submitcode").on('shown.bs.modal', function () {
 	if (!myCodeMirror) myCodeMirror = CodeMirror.fromTextArea($('#codeeditor')[0], {
