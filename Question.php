@@ -211,7 +211,7 @@
 									<option value="Java">Java</option>
 									<option value="Python">Python3.6</option>
 								</select>
-								<input type="submit" class="btn btn-primary" value="提交代码">
+								<input id="SubmitCodeButton" type="submit" class="btn btn-primary" value="提交代码">
 							</div>
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						</div>
