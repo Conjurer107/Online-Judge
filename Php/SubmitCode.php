@@ -12,6 +12,14 @@
 			return;
 		}
 
+		if($_POST['code'] == null)
+		{
+			echo "<script>alert('未输入代码，提交失败');</script>";
+			echo "<script>parent.RefreshPage();</script>";
+
+			return;
+		}
+
 		$sql = "SELECT * FROM oj_problem WHERE proNum='".$_POST["pid"]."'";
 		$result = mysql_query($sql);
 		$ProblemData = mysql_fetch_array($result);
