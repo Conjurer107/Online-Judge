@@ -19,9 +19,12 @@ $(function () {
 	});
 });
 
-$("#SubmitCodeButton").click(function () {
-	$("#SubmitCodeButton").attr("disabled", "disabled");
-	$("#SubmitCodeButton").val("上传中...");
+$(document).ready(function () {
+	pstsubmit = function () {
+		$("#SubmitCodeButton").attr("disabled", "disabled");
+		$("#SubmitCodeButton").text("上传中...");
+		return true;
+	}
 });
 
 $("#btnLogin").click(function () {
@@ -72,63 +75,6 @@ function pstcode() {
 	}
 }
 
-$("#btnqiandao").click(function () {
-	$.get(
-		'/qiandao',
-		function (data) {
-			if (data.status) {
-				if (data.time) {
-					data.status += "<br/>签到时间：";
-					var ttm = new Date(data.time);
-					data.status += ttm.getFullYear() + '-' + (ttm.getMonth() + 1) + '-' + ttm.getDate() + ' ' + ttm.getHours() + ':' + ttm.getMinutes() + ':' + ttm.getSeconds();
-				}
-				$("#qiandaomsg").html(data.status);
-				$('#qiandaoModal').modal();
-			}
-			else
-				location.reload();
-		},
-		"json"
-	);
-});
-$("#btnfq").click(function () {
-	$.get(
-		'/qiandao/feiqiu',
-		function (data) {
-			if (data.status) {
-				if (data.time) {
-					data.status += "<br/>签到时间：";
-					var ttm = new Date(data.time);
-					data.status += ttm.getFullYear() + '-' + (ttm.getMonth() + 1) + '-' + ttm.getDate() + ' ' + ttm.getHours() + ':' + ttm.getMinutes() + ':' + ttm.getSeconds();
-				}
-				$("#qiandaomsg").html(data.status);
-				$('#qiandaoModal').modal();
-			}
-			else
-				location.reload();
-		},
-		"json"
-	);
-});
-$("#btnoh").click(function () {
-	$.get(
-		'/qiandao/ouhuang',
-		function (data) {
-			if (data.status) {
-				if (data.time) {
-					data.status += "<br/>签到时间：";
-					var ttm = new Date(data.time);
-					data.status += ttm.getFullYear() + '-' + (ttm.getMonth() + 1) + '-' + ttm.getDate() + ' ' + ttm.getHours() + ':' + ttm.getMinutes() + ':' + ttm.getSeconds();
-				}
-				$("#qiandaomsg").html(data.status);
-				$('#qiandaoModal').modal();
-			}
-			else
-				location.reload();
-		},
-		"json"
-	);
-});
 $("#Logout").click(function () {
 	$.post('/logout', {}, function (data) {
 		if (data.status)
