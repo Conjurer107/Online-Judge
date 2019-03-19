@@ -47,7 +47,7 @@
 
           <div class="form-group">
             <div class="col-lg-10 col-lg-offset-2">
-              <button type="submit" class="btn btn-primary">提交注册</button>
+              <button id="SubmitRegisterButton" type="submit" class="btn btn-primary">提交注册</button>
             </div>
           </div>
 
