@@ -193,7 +193,7 @@
 		<div class="modal fade" id="submitcode" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					<form action="/Php/SubmitCode.php" method="post" target="myIframeSubCode">
+					<form onsubmit="return(pstsubmit());" action="/Php/SubmitCode.php" method="post" target="myIframeSubCode">
 						<div class="modal-body" id="codemodalbody">
 							<textarea hidden name="code" id="codeeditor"></textarea>
 							<!--<textarea hidden name="code1" id="code1"></textarea>-->
@@ -211,7 +211,7 @@
 									<option value="Java">Java</option>
 									<option value="Python">Python3.6</option>
 								</select>
-								<input id="SubmitCodeButton" type="submit" class="btn btn-primary" value="提交代码">
+								<button id="SubmitCodeButton" type="submit" class="btn btn-primary">提交代码</button>
 							</div>
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						</div>
