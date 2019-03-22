@@ -114,7 +114,7 @@
 					g++: g++ Code.c -o main -ansi -fno-asm -O2 -Wall -lm --static -DONLINE_JUDGE<br />
 					C++: c++ Code.cpp -o main -ansi -fno-asm -O2 -Wall -lm --static -DONLINE_JUDGE<br />
 					Java: javac Main.java<br />
-					Python: g++ Code.py<br />
+					Python: python Code.py<br />
 					</p>
 				<div>
 					Q:如何编写代码?<br />
