@@ -74,7 +74,7 @@
 				$Mins =     intval($Remain / 60);
 				$Secs =     $Remain % 60;
 				
-				$iTimePenalty += ($Mins + $Hours * 60 + $Days * 60 * 60);
+				$iTimePenalty += ($Mins + $Hours * 60 + $Days * 24 * 60);
 
 				if($Days > 0)
 				{
@@ -164,7 +164,16 @@
 			$result = mysql_query($sql);
 			$row = mysql_fetch_array($result);
 			echo '<td><a href="/OtherUser.php?User='.$PeopleRank[$i]['User'].'" class='.GetUserColor($row[0]).'>'.$PeopleRank[$i]['User'].'</a></td>';
-			echo '<td>'.$PeopleRank[$i]['ACNum'].'</td>';
+
+			if($PeopleRank[$i]['ACNum'] == $ProNum)
+			{
+				echo '<td class="rankyes" style="color:black">'.$PeopleRank[$i]['ACNum'].'<br> <span style="color:red">All Killed</span> </td>';
+			}
+			else
+			{
+				echo '<td>'.$PeopleRank[$i]['ACNum'].'</td>';
+			}
+
 			echo '<td>'.$PeopleRank[$i]['TimePenalty'].'</td>';
 
 			for($j = 0; $j < $ProNum; $j++)

@@ -91,7 +91,11 @@
 </thead>
 <tbody>
     <?php
-    //&& ($NowDate >= $ConData['OverTime'])
+		//排名计算
+		$LastPeoScore = 0;
+		$PeoRank = 0;
+		$EqualRank = 1;
+
 		for($i=0; $i < $PeoNum; $i++)
 		{
             if(($User_Jurisdicton != JUR_ADMIN) && ($NowDate <= $ConData['OverTime']))
@@ -102,9 +106,20 @@
 			{
 				continue;
 			}
+
+			if($LastPeoScore != $PeopleRank[$i]['Score'])
+			{
+				$LastPeoScore = $PeopleRank[$i]['Score'];
+				$PeoRank += $EqualRank;
+				$EqualRank = 1;
+			}
+			else
+			{
+				$EqualRank++;
+			}
 			echo '<tr>';
 
-			echo '<td>'.($i + 1).'</td>';
+			echo '<td>'.($PeoRank).'</td>';
 			$sql = "SELECT Fight FROM oj_user WHERE name='".$PeopleRank[$i]['User']."'";
 			$result = mysql_query($sql);
 			$row = mysql_fetch_array($result);

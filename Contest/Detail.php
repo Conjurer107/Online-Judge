@@ -175,11 +175,12 @@
 						</tbody>
 					</table>
 				</div>
+				
+				<div class="panel panel-default">
 
 					<?php
 		if($StatusData['Status'] == 'Compile Error' && ($ConData['Rule'] == 'ACM' || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime']))
 		{
-			echo '<div class="panel panel-default">';
 			echo '<div class="panel-heading">编译错误信息</div>';
 			echo '<table class="table table-striped table-hover">';
 			echo '<thead>';
@@ -192,7 +193,8 @@
 				
 				for($i = 0; $i < count($file_arr); $i++)
 				{
-					echo $file_arr[$i] . "<br/>";
+					$str_encode = mb_convert_encoding($file_arr[$i], 'UTF-8', 'GBK');
+					echo $str_encode . "<br/>";
 				}
 			}
 			//$str = file_get_contents($File_Path);
@@ -205,7 +207,6 @@
 		}
 		else if($ConData['Rule'] == 'ACM' || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime'])
 		{
-			echo '<div class="panel panel-default">';
 			echo '<div class="panel-heading">测试点详情</div>';
 			echo '<table class="table table-striped table-hover">';
 			echo '<thead>';
