@@ -5,57 +5,12 @@
 <?php require_once('Php/HTML_Head.php') ?>
 
 <?php
-    //读取数据库中的用户信息，保存在数组中
-    $sql = "SELECT * FROM oj_user";
-    $result = mysql_query($sql);
-    $AllUserData = array();
-    
-    if(!$result)
-    {
-        header('Location: /Message.php?Msg=用户信息获取失败');
-    }
-
-    while($row = mysql_fetch_array($result))
-    {
-		$PassProNum = 0;
-        $AllNum = 0;
-
-        $sql = "SELECT count(*) as value FROM oj_status where User='".$row['name']."'";
-		$rs = mysql_query($sql);
-        $AllNum = mysql_fetch_array($rs);
-
-        $sql = "SELECT * FROM oj_status where `User`='".$row['name']."' and `Status` = 'Accepted' and `Show`=1";
-        if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
-		{
-			$sql = "SELECT * FROM oj_status where `User`='".$row['name']."' and `Status` = 'Accepted'";
-		}
-		$rs = mysql_query($sql);
-        $PassProblem = array();
-		while($ProblemData = mysql_fetch_array($rs))
-		{
-            if(!in_array($ProblemData['Problem'], $PassProblem))
-			{
-				array_push($PassProblem, $ProblemData['Problem']);
-				$PassProNum++;
-			}
-        }
-
-        $AllUserData[]= array(
-            "Name" => $row['name'],
-            "Text" => $row['signature'],
-            "q_PassNum" => $PassProNum,
-            "q_AllNum" => $AllNum['value'],
-            "Fight" => $row['fight']
-        );
-    }
-
-    //对用户按照战斗力进行排名
-    $arr1 = array_map(create_function('$n', 'return $n["Fight"];'), $AllUserData);
-    array_multisort($arr1, SORT_DESC, $AllUserData);
-
 
     //获取用户数量
-    $clength = count($AllUserData);
+    $sql = "SELECT count(*) as `value` FROM `oj_user`";
+    $rs = mysql_query($sql);
+    $ConCount = mysql_fetch_array($rs);
+    $clength = $ConCount['value'];
 
     //定义常量，一页中最大显示数量
     define("MaxRankNum", 20);
@@ -123,7 +78,58 @@
             $EndButNum = $MaxPage;
         }
     }
+
+    //读取数据库中的用户信息，保存在数组中
+    $sql = "SELECT * FROM `oj_user` ORDER BY `fight` desc limit ".($iPage - 1) * MaxRankNum.", ".MaxRankNum;
+    $result = mysql_query($sql);
+    $AllUserData = array();
     
+    if(!$result)
+    {
+        header('Location: /Message.php?Msg=用户信息获取失败');
+    }
+
+    while($row = mysql_fetch_array($result))
+    {
+		$PassProNum = 0;
+        $AllNum = 0;
+
+        $sql = "SELECT count(*) as value FROM oj_status where User='".$row['name']."' and `Show`=1";
+        if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+		{
+			$sql = "SELECT count(*) as value FROM oj_status where User='".$row['name']."'";
+		}
+		$rs = mysql_query($sql);
+        $AllNum = mysql_fetch_array($rs);
+
+        $sql = "SELECT * FROM oj_status where `User`='".$row['name']."' and `Status` = 'Accepted' and `Show`=1";
+        if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+		{
+			$sql = "SELECT * FROM oj_status where `User`='".$row['name']."' and `Status` = 'Accepted'";
+		}
+		$rs = mysql_query($sql);
+        $PassProblem = array();
+		while($ProblemData = mysql_fetch_array($rs))
+		{
+            if(!in_array($ProblemData['Problem'], $PassProblem))
+			{
+				array_push($PassProblem, $ProblemData['Problem']);
+				$PassProNum++;
+			}
+        }
+
+        $AllUserData[]= array(
+            "Name" => $row['name'],
+            "Text" => $row['signature'],
+            "q_PassNum" => $PassProNum,
+            "q_AllNum" => $AllNum['value'],
+            "Fight" => $row['fight']
+        );
+    }
+
+    //对用户按照战斗力进行排名
+    $arr1 = array_map(create_function('$n', 'return $n["Fight"];'), $AllUserData);
+    array_multisort($arr1, SORT_DESC, $AllUserData);
 ?>
 <body>
    <?php require_once ('Php/Page_Header.php') ?>
@@ -154,7 +160,7 @@
             </ul>
         </center>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default animated fadeInDown">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -169,8 +175,13 @@
                 <tbody>
 
                 <?php
-                 for($i = $Rank; $i < $clength && $i <=  $iPage * MaxRankNum - 1; $i++)
+                 //for($i = $Rank; $i < $clength && $i <=  $iPage * MaxRankNum - 1; $i++)
+                 for($i = 0; $i < MaxRankNum; $i++)
                  {
+                    if(!isset($AllUserData[$i]['Name']))
+                    {
+                     continue;
+                 }
                 ?>
                     <tr>
                         <td> <?php echo $i + 1?> </td>

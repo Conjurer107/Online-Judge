@@ -49,17 +49,31 @@
 ?>
 
 <body>
-
 	<?php require_once ('Php/Page_Header.php') ?>
+
+    <script src="/ckeditor/ckeditor.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function()
+        {
+            CKEDITOR.replace( 'Description');
+            CKEDITOR.replace( 'InputFormat');
+            CKEDITOR.replace( 'OutputFormat');
+            CKEDITOR.replace( 'ExpInput');
+            CKEDITOR.replace( 'ExpOutput');
+            CKEDITOR.replace( 'Hint');
+            CKEDITOR.replace( 'Source');
+        };
+    </script>
 
     <div class="container">
     <div class="panel panel-default">
 
     <div class="panel-heading">新建题目</div>
 
-    <div class="panel-body">
+    <div class="panel-body animated fadeInLeft">
     <form enctype="multipart/form-data" name="upload_form" action="Php/SubmitNewPro.php" method="post" target="myIframeSubNePro">
-    <div class="panel panel-default float-center" style="width:750px;">
+    <div class="panel panel-default float-center" style="width:1000px;">
     <!--style="display:none"-->
     <input name="NewType" style="display:none" value=<?php echo $status;?>>
 
@@ -86,13 +100,12 @@
         <span class="input-group-addon">限制时间(ms)</span>
         <input name="LimitTime" type="number" class="form-control" placeholder="1000" value=<?php echo ($status == 1) ? $ProblemData['LimitTime'] : '1000';?>>
         <span class="input-group-addon">限制内存(kb)</span>
-        <input name="LimitMemory" type="number" class="form-control" placeholder="65535" value=<?php echo ($status == 1) ? $ProblemData['LimitMemory'] : '65535';?>>
+        <input name="LimitMemory" type="number" class="form-control" placeholder="65536" value=<?php echo ($status == 1) ? $ProblemData['LimitMemory'] : '65536';?>>
     </div>
     <br/>
 
     <div>
         <span class="input-group-addon">题目描述：</span>
-        <center>开启标签字符过滤 <input type="checkbox" name="AlterStr[]" checked = "true" value="Description"/></center>
         <textarea name="Description" class="form-control" style="margin-top:8px;height:80px"><?php echo ($status == 1) ? RestoreString($ProblemData['Description']) : '';?></textarea>
     </div>
     <br/>
@@ -123,7 +136,6 @@
 
     <div>
         <span class="input-group-addon">提示</span>
-        <center>开启标签字符过滤 <input type="checkbox" name="AlterStr[]" checked = "true" value="Hint"/></center>
         <textarea name="Hint" class="form-control" style="margin-top:8px;height:80px"><?php echo ($status == 1) ? RestoreString($ProblemData['Hint']) : '';?></textarea>
     </div>
     <br/>

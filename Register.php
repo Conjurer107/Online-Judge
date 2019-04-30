@@ -7,7 +7,7 @@
 <body>
   <?php require_once ('Php/Page_Header.php') ?>
 
-  <div class="container">
+  <div class="container animated fadeInLeft">
 
     <script src="js/reg.js" type="text/javascript"></script>
     

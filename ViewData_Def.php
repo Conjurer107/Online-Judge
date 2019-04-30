@@ -44,7 +44,7 @@
 
 <body>
 	<?php require_once ('Php/Page_Header.php') ?>
-	<div class="container">
+	<div class="container animated fadeInLeft">
 
 
 		<h3>测试点 # <?php echo $_GET['Data']?></h3>

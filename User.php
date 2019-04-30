@@ -46,10 +46,10 @@
 
 		$PassProblem=array();
 		$PassProNum = 0;
-		$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` = 'Accepted' and `Show`=1";
+		$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` = ".Accepted." and `Show`=1";
 		if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
 		{
-			$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` = 'Accepted'";
+			$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` = ".Accepted."";
 		}
 		$rs = mysql_query($sql);
 
@@ -68,10 +68,10 @@
 		
 		$nPassProblem = array();
 		$nPassProNum = 0;
-		$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` != 'Accepted' and `Show`=1";
+		$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` != ".Accepted." and `Show`=1";
 		if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
 		{
-			$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` != 'Accepted'";
+			$sql = "SELECT * FROM oj_status where `User`='".$User."' and `Status` != ".Accepted."";
 		}
 		$rs = mysql_query($sql);
 
@@ -104,7 +104,7 @@
 			<div class="panel-heading">个人信息</div>
 			<div class="panel-body">
 				<form method="post" action="Php/ChangeUserData.php" target="myIframeChanData">
-					<div class="panel panel-default float-center" style="width:450px;">
+					<div class="panel panel-default float-center animated fadeInLeft" style="width:450px;">
 						<table class="table">
 							<tr>
 								<td>用户名</td>
@@ -214,9 +214,9 @@
 				<iframe id="myIframe" name="myIframeChanData" style="display:none"></iframe>
 			</div>
 		</div>
-		<div class="panel panel-default">
+		<div class="panel panel-default animated fadeInDown">
 			<div class="panel-heading">已解决的问题编号
-				<a href= <?php echo '"/Status.php?User='.$User.'&Status=Accepted"'?> class="label label-primary">查看通过记录</a>
+				<a href= <?php echo '"/Status.php?User='.$User.'&Status='.Accepted.'"'?> class="label label-primary">查看通过记录</a>
 			</div>
 			<div class="panel-body">
 				
@@ -230,7 +230,7 @@
 			</div>
 		</div>
 
-		<div class="panel panel-default">
+		<div class="panel panel-default animated fadeInDown">
 			<div class="panel-heading">尝试过但尚未解决的问题编号
 				<a href= <?php echo '"/Status.php?User='.$User.'"'?> class="label label-primary">查看全部记录</a>
 			</div>

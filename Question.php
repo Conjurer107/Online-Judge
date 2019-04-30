@@ -53,10 +53,10 @@
 		return;
 	}
 	
-	$sql = "SELECT count(*) as value FROM oj_status where `Status` = 'Accepted' and `Show`=1 and `Problem` = ".$ProblemID;
+	$sql = "SELECT count(*) as value FROM oj_status where `Status` = ".Accepted." and `Show`=1 and `Problem` = ".$ProblemID;
 	if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 	{
-		$sql = "SELECT count(*) as value FROM oj_status where Status = 'Accepted' and Problem = ".$ProblemID;
+		$sql = "SELECT count(*) as value FROM oj_status where Status = ".Accepted." and Problem = ".$ProblemID;
 	}
     $rs = mysql_query($sql);
 	$PassNum = mysql_fetch_array($rs);
@@ -88,7 +88,7 @@
 		<script src="/highlight/highlight.pack.js"></script>
 		<script>hljs.initHighlightingOnLoad("C", "C++", "Java", "Python");</script>
 
-		
+		<div class="animated fadeInDown">
 		<h1 class="text-center"><?php echo $ProblemData['Name']?>
 		<?php
 			if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
@@ -138,19 +138,19 @@
 		<h3>题目描述</h3>
 		<div class="panel panel-default">
 			<div class="panel-body">
-			<?php echo $ProblemData['Description']?>
+				<?php echo $ProblemData['Description']?>
 			</div>
 		</div>
 		<h3>输入格式</h3>
 		<div class="panel panel-default">
 			<div class="panel-body">
-			<?php echo $ProblemData['InputFormat']?>
+				<?php echo $ProblemData['InputFormat']?>
 			</div>
 		</div>
 		<h3>输出格式</h3>
 		<div class="panel panel-default">
 			<div class="panel-body">
-			<?php echo $ProblemData['OutputFormat']?>
+				<?php echo $ProblemData['OutputFormat']?>
 			</div>
 		</div>
 		<h3>样例输入</h3>
@@ -165,22 +165,24 @@
 				<pre class="SlateFix"><?php echo $ProblemData['EmpOutput']?></pre>
 			</div>
 		</div>
-
+		
+		<?php if($ProblemData['Hint'] != ''){?>
 		<h3>提示</h3>
-		
 		<div class="panel panel-default">
 			<div class="panel-body">
-			<?php echo $ProblemData['Hint']?>
+				<?php echo $ProblemData['Hint']?>
 			</div>
 		</div>
+		<?php }?>
 
+		<?php if($ProblemData['Source'] != ''){?>
 		<h3>来源</h3>
-		
 		<div class="panel panel-default">
 			<div class="panel-body">
-			<?php echo $ProblemData['Source']?>
+				<?php echo $ProblemData['Source']?>
 			</div>
 		</div>
+		<?php }?>
 
 		<center>
 			<div class="btn-group">
@@ -190,23 +192,25 @@
 			</div>
 		</center>
 
+		</div>
 		<div class="modal fade" id="submitcode" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<form onsubmit="return(pstsubmit());" action="/Php/SubmitCode.php" method="post" target="myIframeSubCode">
+
 						<div class="modal-body" id="codemodalbody">
 							<textarea hidden name="code" id="codeeditor"></textarea>
 							<!--<textarea hidden name="code1" id="code1"></textarea>-->
 							<!--<textarea hidden name="code2" id="code2"></textarea>-->
 							<textarea hidden name="pid" id="pid"><?php echo $ProblemID?></textarea>
 						</div>
+
 						<div class="modal-footer">
 							<div class="float-left">
 								语言：
 								<select name="language" id="language" style="height:32px;width:120px;">
-
-									<option value="gcc">gcc</option>
-									<option value="g++">g++</option>
+									<option value="Gcc">Gcc</option>
+									<option value="G++">G++</option>
 									<option value="C++">C++</option>
 									<option value="Java">Java</option>
 									<option value="Python">Python3.6</option>
@@ -216,6 +220,7 @@
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						</div>
 					</form>
+					
 					<iframe id="myIframe" name="myIframeSubCode" style="display:none">提交中</iframe>
 
 				</div>

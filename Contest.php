@@ -13,65 +13,31 @@
 	$ModeStr = array('', '正在进行中', '报名中', '未开始', '已结束');
 	$ModeCss = array('', 'label-success', 'label-success', 'label-primary', 'label-default');
 
-	unset($_SESSION['ConPassWord']);
-
-	$sql = "SELECT * FROM oj_contest WHERE `Show`=1";
-	
-    if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+	$SearchText;
+	$Addsql='';
+	if(isset($_GET['Search']))
     {
-        $sql = "SELECT * FROM oj_contest";
-    }
-	$result = mysql_query($sql);
-	
-	$NowDate = date('Y-m-d H:i:s');
+		$SearchText = $_GET['Search'];
 
-	$AllContest = array();
-    while($row = mysql_fetch_array($result))
-    {
-		$iMode = ConOver;
-		if($NowDate <= $row['StartTime'])
-		{
-			if($NowDate >= $row['EnrollStartTime'] && $NowDate <= $row['EnrollOverTime'])
-				$iMode = ConEnrolling;
-			else
-				$iMode = ConnoStart;
-		}
-		else if($NowDate <= $row['OverTime'])
-		{
-			$iMode = ConDoing;
+		if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+        {
+			$Addsql .= " where `Title` like '%".$SearchText."%'";
 		}
 		else
 		{
-			$iMode = ConOver;
+			$Addsql .= " where `Show`=1 and `Title` like '%".$SearchText."%'";
 		}
-
-		$AllContest[]= array(
-			"ConID" => $row['ConID'],
-            "Title" => $row['Title'],
-            "Organizer" => $row['Organizer'],
-            "Rule" => $row['Rule'],
-			"Type" => $row['Type'],
-			"Show" => $row['Show'],
-			"StartTime" => $row['StartTime'],
-			"OverTime" => $row['OverTime'],
-			"Mode" => $iMode
-        );
 	}
 
-	$clength = count($AllContest);
-
-	//按运行ID排序
-	function my_sort($a, $b)
-	{
-		if($a['Mode'] == $b['Mode'])
-		{
-			return $a['ConID'] < $b['ConID'] ? 1 : -1;
-		}
-
-		return $a['Mode'] < $b['Mode'] ? -1 : 1;
-	}
-
-	usort($AllContest,"my_sort");
+	//获取比赛数量
+	$sql = "SELECT count(*) as `value` FROM `oj_contest`".$Addsql;
+	if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+    {
+        $sql = "SELECT count(*) as `value` FROM oj_contest".$Addsql;
+    }
+    $rs = mysql_query($sql);
+    $ConCount = mysql_fetch_array($rs);
+    $clength = $ConCount['value'];
 
 	//获取当前页数
     $iPage = 1;
@@ -140,7 +106,82 @@
             //结束显示的数字显示为最大值
             $EndButNum = $MaxPage;
         }
-    }
+	}
+	
+	$LimitShowSql = " ORDER BY `ConID` desc limit ".($iPage - 1) * MaxRankNum.", ".MaxRankNum;
+
+	$sql = "SELECT * FROM oj_contest WHERE `Show`=1";
+	
+    if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+    {
+        $sql = "SELECT * FROM oj_contest";
+	}
+	
+	if(isset($SearchText))
+	{
+		if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+		{
+			$sql .= " WHERE `Title` like '%".$SearchText."%'";
+		}
+		else
+		{
+			$sql .= " AND `Title` like '%".$SearchText."%'";
+		}
+	}
+
+	$sql .= $LimitShowSql;
+
+	$result = mysql_query($sql);
+	
+	$NowDate = date('Y-m-d H:i:s');
+
+	$AllContest = array();
+    while($result && $row = mysql_fetch_array($result))
+    {
+		$iMode = ConOver;
+		if($NowDate <= $row['StartTime'])
+		{
+			if($NowDate >= $row['EnrollStartTime'] && $NowDate <= $row['EnrollOverTime'])
+				$iMode = ConEnrolling;
+			else
+				$iMode = ConnoStart;
+		}
+		else if($NowDate <= $row['OverTime'])
+		{
+			$iMode = ConDoing;
+		}
+		else
+		{
+			$iMode = ConOver;
+		}
+
+		$AllContest[]= array(
+			"ConID" => $row['ConID'],
+            "Title" => $row['Title'],
+            "Organizer" => $row['Organizer'],
+            "Rule" => $row['Rule'],
+			"Type" => $row['Type'],
+			"Show" => $row['Show'],
+			"StartTime" => $row['StartTime'],
+			"OverTime" => $row['OverTime'],
+			"Mode" => $iMode
+        );
+	}
+
+	
+	//按运行ID排序
+	function my_sort($a, $b)
+	{
+		if($a['Mode'] == $b['Mode'])
+		{
+			return $a['ConID'] < $b['ConID'] ? 1 : -1;
+		}
+
+		return $a['Mode'] < $b['Mode'] ? -1 : 1;
+	}
+
+	usort($AllContest,"my_sort");
+	
 ?>
 <body>
 
@@ -177,7 +218,7 @@
 			?>
 			</div>
 
-				<input type="text" name="Search" value="" class="form-control" placeholder="标题">
+				<input type="text" name="Search" class="form-control" placeholder="请输入标题" value=<?php echo (isset($SearchText) ? $SearchText :  "''") ?>>
 
 				<div class="input-group-btn">
 					<button type="submit" class="btn btn-default" tabindex="-1">查找</button>
@@ -185,7 +226,7 @@
 			</div>
 		</form>
 
-		<div class="panel panel-default">
+		<div class="panel panel-default animated fadeInLeft">
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
@@ -208,7 +249,7 @@
 
 				<tbody>
 					<?php
-						for($i = $Rank; $i < $clength && $i <=  $iPage * MaxRankNum - 1; $i++)
+						for($i = 0; $i < MaxRankNum; $i++)
 						{
 							if(!isset($AllContest[$i]['ConID']))
                    			{
@@ -281,7 +322,7 @@
 							$result = mysql_query($sql);
 							$row = mysql_fetch_array($result);
 
-							echo '<td><a href="/User/黄杰航" class='.GetUserColor($row[0]).'>'.$AllContest[$i]['Organizer'].'</a></td>';
+							echo '<td><a href="/OtherUser.php?User='.$AllContest[$i]['Organizer'].'" class='.GetUserColor($row[0]).'>'.$AllContest[$i]['Organizer'].'</a></td>';
 
 							echo '</tr>';
 						}

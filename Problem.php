@@ -5,45 +5,47 @@
 <?php require_once('Php/HTML_Head.php') ?>
 
 <?php
-    $sql = "SELECT * FROM oj_problem WHERE `Show`=1";
-
-    if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
-    {
-        $sql = "SELECT * FROM oj_problem";
-    }
-	$result = mysql_query($sql);
-	
-	$AllProblem = array();
-    while($row = mysql_fetch_array($result))
-    {
-		$AllProblem[]= array(
-            "Name" => $row['Name'],
-            "proNum" => $row['proNum'],
-            "CreateTime" => $row['CreateTime'],
-            "Show" => $row['Show']
-        );
-	}
-
-	$clength = count($AllProblem);
-
-	$arr1 = array_map(create_function('$n', 'return $n["proNum"];'), $AllProblem);
-	array_multisort($arr1, SORT_DESC, $AllProblem);
-
-	//定义常量，一页中最大显示数量
+    //定义常量，一页中最大显示数量
     define("MaxRankNum", 20);
     //定义常量，一页中最多显示按钮数量(奇数)
-	define("MaxButtonNum", 5);
-
-	//计算总页数
-	$AllPage = $clength / MaxRankNum;
-
-	//获取当前页数
+    define("MaxButtonNum", 5);
+    
+    //获取当前页数
     $iPage = 1;
     if(array_key_exists('Page', $_GET))
     {
         $iPage = $_GET['Page'];
     }
     $iPage = floor($iPage);
+
+    $SearchText;
+    $AddSql = '';
+    if(isset($_GET['Search']))
+    {
+        $SearchText = $_GET['Search'];
+        if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+        {
+            $AddSql .= " WHERE `Name` like '%".$SearchText."%'";
+        }
+        else
+        {
+            $AddSql .= " AND `Name` like '%".$SearchText."%'";
+        }
+    }
+
+    //获取题目数量
+    $sql = "SELECT count(*) as `value` FROM oj_problem WHERE `Show`=1".$AddSql;
+    if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+    {
+        $sql = "SELECT count(*) as `value` FROM oj_problem".$AddSql;
+    }
+    $rs = mysql_query($sql);
+    $ProCount = mysql_fetch_array($rs);
+    $clength = $ProCount['value'];
+
+    //计算总页数
+	$AllPage = $clength / MaxRankNum;
+
     //计算上一页的页数
     $LastPage = ($iPage - 1 <= 0) ? 1 : ($iPage - 1);
      //计算下一页的页数
@@ -95,6 +97,43 @@
             $EndButNum = $MaxPage;
         }
     }
+    $LimitShowSql = " ORDER BY `proNum` desc limit ".($iPage - 1) * MaxRankNum.", ".MaxRankNum;
+
+    $sql = "SELECT * FROM oj_problem WHERE `Show`=1";
+    if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+    {
+        $sql = "SELECT * FROM oj_problem";
+    }
+
+    if(isset($SearchText))
+    {
+        if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
+        {
+            $sql .= " WHERE `Name` like '%".$SearchText."%'";
+        }
+        else
+        {
+            $sql .= " AND `Name` like '%".$SearchText."%'";
+        }
+    }
+
+    $sql .= $LimitShowSql;
+
+	$result = mysql_query($sql);
+	
+	$AllProblem = array();
+    while($result && $row = mysql_fetch_array($result))
+    {
+		$AllProblem[]= array(
+            "Name" => $row['Name'],
+            "proNum" => $row['proNum'],
+            "CreateTime" => $row['CreateTime'],
+            "Show" => $row['Show']
+        );
+	}
+
+	//$arr1 = array_map(create_function('$n', 'return $n["proNum"];'), $AllProblem);
+	//array_multisort($arr1, SORT_DESC, $AllProblem);
 ?>
 <body>
 	<?php require_once ('Php/Page_Header.php') ?>
@@ -129,7 +168,7 @@
 				?>
                 <td>
                     <div class="input-group">
-                        <input id="discuzproblem" data-enter="#godiscuzproblem" type="text" class="form-control" placeholder="题号或关键字">
+                        <input id="discuzproblem" data-enter="#godiscuzproblem" type="text" class="form-control" placeholder="请输入关键字" value=<?php echo (isset($SearchText) ? $SearchText : "''")?>>
                         <span class="input-group-btn">
                             <button id="goSeachProblem" class="btn btn-default" type="button">查找</button>
                         </span>
@@ -139,10 +178,10 @@
         </table>
         <script>
             $("#goSeachProblem").click(function () {
-                location.href = "/Problem.php?Num=" + $("#discuzproblem").val();
+                location.href = "/Problem.php?Search=" + $("#discuzproblem").val();
             });
         </script>
-		<div class="panel panel-default">
+		<div class="panel panel-default animated fadeInLeft">
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
@@ -155,7 +194,7 @@
                         }
                         ?>
 						<th>题目名称</th>
-						<th>通过率(AC/提交)</th>
+						<th>通过率(通过/提交)</th>
 						<th>创建日期</th>
 					</tr>
 				</thead>
@@ -163,7 +202,7 @@
 				<tbody>
 
 				<?php
-				for($i = $Rank; $i < $clength && $i <=  $iPage * MaxRankNum - 1; $i++)
+				for($i = 0; $i < MaxRankNum; $i++)
                 {
                     if(!isset($AllProblem[$i]['proNum']))
                     {
@@ -174,10 +213,10 @@
         
 					if(isset($LandUser))
 					{
-                        $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` = 'Accepted' and `Show`=1 and `Problem` = '".$AllProblem[$i]['proNum']."'";
+                        $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` = ".Accepted." and `Show`=1 and `Problem` = '".$AllProblem[$i]['proNum']."'";
                         if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 	                    {
-                            $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` = 'Accepted' and `Problem` = '".$AllProblem[$i]['proNum']."'";
+                            $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` = ".Accepted." and `Problem` = '".$AllProblem[$i]['proNum']."'";
                         }
                         $rs = mysql_query($sql);
                         $ans = mysql_num_rows($rs);  
@@ -188,10 +227,10 @@
                         }
                         else
                         {
-                            $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` != 'Accepted' and `Show`=1 and `Problem` =".$AllProblem[$i]['proNum'];
+                            $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` != ".Accepted." and `Show`=1 and `Problem` =".$AllProblem[$i]['proNum'];
                             if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 	                        {
-                                $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` != 'Accepted' and `Problem` =".$AllProblem[$i]['proNum'];
+                                $sql = "SELECT RunID FROM oj_status where User='".$LandUser."' and `Status` != ".Accepted." and `Problem` =".$AllProblem[$i]['proNum'];
                             }
                             $rs = mysql_query($sql);
                             $ans2 = mysql_num_rows($rs);
@@ -250,25 +289,25 @@
                     
                     $PassRate = 0;
 
-                    $sql = "SELECT count(*) as value FROM oj_status where `Status` = 'Accepted' and `Show`=1 and `Problem` = ".$AllProblem[$i]['proNum'];
+                    $sql = "SELECT count(*) as value FROM oj_status where `Status` = ".Accepted." and `Show`=1 and `Problem` = ".$AllProblem[$i]['proNum'];
                     if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 					{
-                        $sql = "SELECT count(*) as value FROM oj_status where `Status` = 'Accepted' and `Problem` = ".$AllProblem[$i]['proNum'];
+                        $sql = "SELECT count(*) as value FROM oj_status where `Status` = ".Accepted." and `Problem` = ".$AllProblem[$i]['proNum'];
                     }
                     $rs = mysql_query($sql);
                     $PassNum = mysql_fetch_array($rs);
 
-                    $sql = "SELECT count(*) as value FROM oj_status where `Show`=1 and `Problem` = ".$AllProblem[$i]['proNum'];
+                    $sql = "SELECT count(*) as `value` FROM oj_status where `Show`=1 and `Problem` = ".$AllProblem[$i]['proNum'];
                     if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 					{
-                        $sql = "SELECT count(*) as value FROM oj_status where `Problem` = ".$AllProblem[$i]['proNum'];
+                        $sql = "SELECT count(*) as `value` FROM oj_status where `Problem` = ".$AllProblem[$i]['proNum'];
                     }
                     $rs = mysql_query($sql);
                     $AllSubNum = mysql_fetch_array($rs);
 
                     if($AllSubNum['value'] == 0)
                     {
-                        echo '<td>NAN%</td>';
+                        echo '<td>0.00%</td>';
                     }
                     else
                     {

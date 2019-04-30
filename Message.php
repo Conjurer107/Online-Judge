@@ -7,7 +7,7 @@
 	<?php require_once ('Php/Page_Header.php') ?>
 
 	<div class="container">
-		<div class="panel panel-default">
+		<div class="panel panel-default animated fadeInLeft">
 			<div class="panel-body">
 				<h1>出错啦:</h1>
 

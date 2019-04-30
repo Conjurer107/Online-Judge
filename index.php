@@ -13,12 +13,10 @@
 	$ModeStr = array('', '正在进行中', '报名中', '未开始', '已结束');
 	$ModeCss = array('', 'label-success', 'label-success', 'label-primary', 'label-default');
 
-	//$sql = "SELECT * FROM oj_contest WHERE `Show`=1 order by ConID desc limit 10 ";
-	$sql = "SELECT * FROM oj_contest WHERE `Show`=1";
+	$sql = "SELECT * FROM `oj_contest` WHERE `Show`=1 ORDER BY `ConID` desc limit 0, 10";
     if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
     {
-		//$sql = "SELECT * FROM oj_contest order by ConID desc limit 10";
-		$sql = "SELECT * FROM oj_contest";
+		$sql = "SELECT * FROM `oj_contest` ORDER BY `ConID` desc limit 0, 10";
     }
 	$result = mysql_query($sql);
 	
@@ -46,9 +44,9 @@
 
 		$AllContest[]= array(
 			"ConID" => $row['ConID'],
-            "Title" => $row['Title'],
-            "Organizer" => $row['Organizer'],
-            "Rule" => $row['Rule'],
+      "Title" => $row['Title'],
+      "Organizer" => $row['Organizer'],
+      "Rule" => $row['Rule'],
 			"Type" => $row['Type'],
 			"Show" => $row['Show'],
 			"StartTime" => $row['StartTime'],
@@ -56,6 +54,7 @@
 			"Mode" => $iMode
         );
 	}
+	
 	
 	function my_sort($a, $b)
 	{
@@ -68,12 +67,13 @@
 	}
 
 	usort($AllContest,"my_sort");
+	
 ?>
 
 <body>
 	<?php require_once ('Php/Page_Header.php') ?>
 
-	<div class="container">
+	<div class="container animated fadeInLeft">
 		<div class="jumbotron">
 			<h1><?php echo $WebName ?></h1>
 			<p><?php echo $WebTitle ?></p>
@@ -207,34 +207,60 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title">
+						<span class="label label-warning">注</span>
 						<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-						欢迎来到OpenJudge评测平台
+							Java代码注意事项
 						</a>
 					</h4>
 				</div>
 				<div id="collapseTwo" class="panel-collapse collapse">
 					<div class="panel-body">
-						作者耗费1个月时间编写整个系统，欢迎反馈BUG
+						Java代码的类名必须为Main<br>
 					</div>
 				</div>
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title">
-						<span class="label label-warning">注</span>
 						<a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-							Java代码注意事项
+							欢迎来到OpenJudge评测平台
 						</a>
 					</h4>
 				</div>
 				<div id="collapseThree" class="panel-collapse collapse">
 					<div class="panel-body">
-						Java代码的类名必须为Main<br>
+						作者耗费1个月时间编写整个系统框架，欢迎反馈BUG
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+							更新日志
+						</a>
+					</h4>
+				</div>
+				<div id="collapseFour" class="panel-collapse collapse">
+					<div class="panel-body">
+						2019/4/29 修复了比赛界面点击姓名链接无法查看信息的BUG<br>
+						2019/4/21 更新题目和比赛页面，如果没有来源、提示或比赛描述，则不显示空内容<br>
+						2019/4/21 修改编辑题目&比赛页面的普通编辑框为富文本编辑框<br>
+						2019/4/20 修复了选择框默认内容显示错误的BUG<br>
+						2019/4/19 更新了分页算法，提高了数据库的读取效率，减轻服务器负担<br>
+						2019/4/17 修复了评测机监控内存大小异常的BUG<br>
+						2019/4/16 增加了页面的动态显示效果<br>
+						2019/4/14 增加了管理员评测日志查看功能<br>
+						2019/4/18 修复了评测记录中评测机名称显示错误的BUG<br>
+						2019/3/30 更改了连接数据库的方式，提高页面显示效率<br>
+						2019/3/27 修复了评测机在TLE时判WrongAnswer的BUG<br>
+						2019/3/25 增加了题库和比赛的关键字搜索功能<br>
+						2019/3/20 增加了比赛对OI赛制的支持<br>
+						2019/3/17 增加了评测机对Java和Python3.6语言的评测支持<br>
 					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
 
 	<?php

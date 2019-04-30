@@ -8,16 +8,17 @@
 
 	<?php require_once ('Php/Page_Header.php') ?>
 
-    <div>
+    <div class="animated fadeInDown">
         <center>
 
         <?php 
         echo '<h1>'.$WebName.'</h1>';
         ?>
         <br>
-        <a>评测机代码(C++)由 XiaoJiang 编写</a><br>
-        <a>服务端代码(PHP)由 XiaoJiang 编写</a><br>
-        <a>前端框架使用 Bootstrap</a><br><br>
+        <a>评测机代码(C++)由 Setiuo 编写</a><br>
+        <a>服务端代码(PHP)由 Setiuo 编写</a><br>
+        <a>前端框架使用 Bootstrap</a><br>
+        <a>富文本编辑框使用 CKEditor 4</a><br><br>
         此评测平台仅供学习
         </center>
     <div>
@@ -35,7 +36,7 @@
 				<tbody>
 					<tr>
 						<td class="maxtext" >
-							<a>题库评测机</a>
+							<a>Judger</a>
 						</td>
                         <td class="maxtext">
                             <?php
@@ -56,7 +57,7 @@
 
                     <tr>
 						<td class="maxtext">
-							<a>比赛评测机</a>
+							<a>Judger_Contest</a>
 						</td>
                         <td class="maxtext">
                         <?php

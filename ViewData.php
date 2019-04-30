@@ -36,7 +36,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">题目数据</div>
 			<div class="panel-body">
-				<div class="panel panel-default">
+				<div class="panel panel-default animated fadeInLeft">
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr>
@@ -52,6 +52,17 @@
 							{
 								$InPath = "./Judge/data/".$_GET['Problem']."/".$_GET['Problem']."_".$Var.".in";
 								$OutPath = "./Judge/data/".$_GET['Problem']."/".$_GET['Problem']."_".$Var.".out";
+
+								if(!file_exists($InPath) || !file_exists($OutPath) )
+								{
+									echo '<tr>';
+									echo '<td>'.$Var.'</td>';
+									echo '<td>-1</td>';
+									echo '<td>测试点错误：文件缺失</td>';
+									echo '</tr>';
+									continue;
+								}
+
 								$Size_1= filesize($InPath);
 								$Size_2= filesize($OutPath);
 								echo '<tr>';

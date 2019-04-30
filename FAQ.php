@@ -12,7 +12,7 @@
 
 	<div class="container">
 	
-		<div class="panel panel-default">
+		<div class="panel panel-default animated fadeInLeft">
 			<div class="panel-heading">Frequently Asked Questions</div>
 			<div class="panel-body">
 				<p>Q:可以使用哪种编程语言?<br />
@@ -22,8 +22,8 @@
 					A:只能stdin/stdout(使用标准输入/输出),不允许读取和写入任何文件.在C/C++中可以使用scanf读取,printf输出.</p>
 
 				<p>Q:罚时是什么？如何计算？<br />
-					A:<br/>当参赛选手AC的题数量相同时，就要按照罚时进行排名；通过题的数量相同，罚时越小，排名越靠前.<br />
-					罚时 = 提交代码时间 - 比赛开始时间 + AC题WA的次数 * 20；时间精确到分钟，转化为秒数进行排名
+					A:<br/>当参赛选手AC的题数量相同时，就要按照总罚时进行排名；通过题的数量相同，罚时越小，排名越靠前.<br />
+					罚时 = 提交代码时间 - 比赛开始时间 + 通过的题尝试但未通过的次数 * 20；时间精确到分钟，转化为秒数进行排名
 					</p>
 
 
@@ -110,10 +110,10 @@
 				<br />
 				<p>Q:各语言的编译选项是怎样的?<br />
 					A:<br />
-					gcc: gcc Code.c -o main -ansi -fno-asm -O2 -Wall -lm --static -DONLINE_JUDGE<br />
-					g++: g++ Code.c -o main -ansi -fno-asm -O2 -Wall -lm --static -DONLINE_JUDGE<br />
-					C++: c++ Code.cpp -o main -ansi -fno-asm -O2 -Wall -lm --static -DONLINE_JUDGE<br />
-					Java: javac Main.java<br />
+					Gcc: gcc Code.c -o main -O -Wall -lm --static -std=c99 -DONLINE_JUDGE<br />
+					G++: g++ Code.cpp -o main -O -Wall -lm --static -DONLINE_JUDGE<br />
+					C++: c++ Code.cpp -o main -O -Wall -lm --static -DONLINE_JUDGE<br />
+					Java: javac -J-Xms32m -J-Xmx256m Main.java<br />
 					Python: python Code.py<br />
 					</p>
 				<div>
