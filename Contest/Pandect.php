@@ -7,7 +7,7 @@
 <body>
 	<?php require_once("Header.php");?>
 
-	<div class="container">
+	<div class="container animated fadeInLeft">
 
 		<div class="panel panel-default">
 			<div id="contesthead" class="panel-heading" style="padding:0 0 0 0;">
@@ -24,6 +24,13 @@
 
 					<tr>
 						<td><b>竞赛规则:</b><?php echo $ConData['Rule']?></td>
+						<?php
+							if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN && $ConData['Type'] == 1)
+							{
+								echo '<td><b>比赛密码:</b>'.$ConData['PassWord'];
+								echo '</td>';
+							}
+						?>
 					</tr>
 
 					<tr>
@@ -137,12 +144,15 @@
 					</tr>
 
 				</table>
+
+				<?php if($ConData['Synopsis'] != ''){?>
 				<h3>比赛简介</h3>
 				<div class="panel panel-default">
 					<div class="panel-body">
 						<?php echo $ConData['Synopsis']?>
 					</div>
 				</div>
+				<?php }?>
 
 				<h3>题目列表</h3>
 				<div class="panel panel-default">
@@ -176,10 +186,10 @@
 								}
 								$ProblemData = mysql_fetch_array($result);
 			
-								$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = 'Accepted' and `Show`=1 and `Problem` = ".$i." and `ConID`=".$ConID;
+								$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = ".Accepted." and `Show`=1 and `Problem` = ".$i." and `ConID`=".$ConID;
 								if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 								{
-									$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = 'Accepted' and `Problem` = ".$i." and `ConID`=".$ConID;
+									$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = ".Accepted." and `Problem` = ".$i." and `ConID`=".$ConID;
 								}
 								$rs = mysql_query($sql);
 								$PassNum = mysql_fetch_array($rs);

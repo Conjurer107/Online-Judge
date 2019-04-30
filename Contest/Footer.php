@@ -1,10 +1,10 @@
-<footer class="bs-docs-footer" role="contentinfo">
+<footer class="bs-docs-footer animated fadeInUp" role="contentinfo">
 	<canvas id="canvas" style="width:210px;" height="100" width="700">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
 	<div class="container">
 		<ul class="footer-links">
 			<li>
 				<a href="/About.php">
-				<span class="glyphicon glyphicon-star-empty">About</span>
+				<span>About</span>
 				</a>
 			</li>
 
@@ -13,7 +13,7 @@
 			</li>
 		</ul>
 
-		<p>Copyright © 2019 XiaoJiang. All rights reserved.<br /><p>
+		<p>Copyright © 2019 Setiuo. All rights reserved.<br /><p>
 	</div>
 </footer>
 

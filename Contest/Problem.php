@@ -4,11 +4,7 @@
 
 <?php require_once("Html_Head.php");?>
 
-<body>
-	<?php require_once("Header.php"); ?>
-
-	<?php
-
+<?php
 	$NowProblem = 0;
 	if(array_key_exists('Problem', $_GET))
 	{
@@ -50,10 +46,10 @@
 		}
 	}
 
-	$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = 'Accepted' and `Show`=1 and `Problem` = ".$NowProblem." and `ConID`=".$ConID;
+	$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = ".Accepted." and `Show`=1 and `Problem` = ".$NowProblem." and `ConID`=".$ConID;
 	if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 	{
-		$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = 'Accepted' and `Problem` = ".$NowProblem." and `ConID`=".$ConID;
+		$sql = "SELECT count(*) as value FROM oj_constatus where `Status` = ".Accepted." and `Problem` = ".$NowProblem." and `ConID`=".$ConID;
 	}
 	$rs = mysql_query($sql);
 	$PassNum = mysql_fetch_array($rs);
@@ -65,7 +61,10 @@
 	}
 	$rs = mysql_query($sql);
 	$SubNum = mysql_fetch_array($rs);
-	?>
+?>
+
+<body>
+	<?php require_once("Header.php"); ?>
 
 	<div class="container">
 		<div class="panel panel-default">
@@ -90,10 +89,10 @@
 
 					</ul>
 				</center>
-
+			<div class="animated fadeInDown">
 				<link rel="stylesheet" href="/highlight/styles/default.css">
 				<script src="/highlight/highlight.pack.js"></script>
-				<script>hljs.initHighlightingOnLoad("gcc","g++", "C++", "Java", "Python");</script>
+				<script>hljs.initHighlightingOnLoad("gcc", "g++", "C++", "Java", "Python");</script>
 
 				<script src="/CodeMirror/codemirror.js"></script>
 				<link rel="stylesheet" href="/CodeMirror/codemirror.css">
@@ -124,78 +123,103 @@
 
 				<center>
 					<div class="btn-group">
-						<button type="button" class="btn btn-default" id="btnShowSubmit" data-backdrop="static" data-toggle="modal"
-							data-target="#submitcode">提交代码</button>
-						<a type="button" class="btn btn-default" href=<?php echo '"/Contest/Status.php?ConID='.$ConID.'&Problem='.$ProEngNum[$NowProblem].'"';?>>查看记录</a>
+						<button type="button" class="btn btn-default" id="btnShowSubmit" data-backdrop="static"
+							data-toggle="modal" data-target="#submitcode">提交代码</button>
+						<a type="button" class="btn btn-default"
+							href=<?php echo '"/Contest/Status.php?ConID='.$ConID.'&Problem='.$ProEngNum[$NowProblem].'"';?>>查看记录</a>
 					</div>
 				</center>
 				<h3>题目描述</h3>
 				<div class="panel panel-default">
-					<div class="panel-body"><?php echo $ProblemData['Description']?></div>
+					<div class="panel-body">
+						<?php echo $ProblemData['Description']?>
+					</div>
 				</div>
 				<h3>输入格式</h3>
 				<div class="panel panel-default">
-					<div class="panel-body"><?php echo $ProblemData['InputFormat']?></div>
+					<div class="panel-body">
+						<?php echo $ProblemData['InputFormat']?>
+					</div>
 				</div>
 				<h3>输出格式</h3>
 				<div class="panel panel-default">
-					<div class="panel-body"><?php echo $ProblemData['OutputFormat']?></div>
+					<div class="panel-body">
+						<?php echo $ProblemData['OutputFormat']?>
+					</div>
 				</div>
 				<h3>样例输入</h3>
 				<div class="panel panel-default">
-					<div class="panel-body"><?php echo $ProblemData['EmpInput']?></div>
+					<div class="panel-body">
+						<pre class="SlateFix"><?php echo $ProblemData['EmpInput']?></pre>
+					</div>
 				</div>
 				<h3>样例输出</h3>
 				<div class="panel panel-default">
-					<div class="panel-body"><?php echo $ProblemData['EmpOutput']?></div>
+					<div class="panel-body">
+						<pre class="SlateFix"><?php echo $ProblemData['EmpOutput']?></pre>
+					</div>
 				</div>
 
+				<?php if($ProblemData['Hint'] != ''){?>
 				<h3>提示</h3>
 				<div class="panel panel-default">
-					<div class="panel-body"><?php echo $ProblemData['Hint']?></div>
+					<div class="panel-body">
+						<?php echo $ProblemData['Hint']?>
+					</div>
 				</div>
+				<?php }?>
 
-
+				<?php if($ProblemData['Source'] != ''){?>
 				<h3>来源</h3>
 				<div class="panel panel-default">
-					<div class="panel-body"><?php echo $ProblemData['Source']?></div>
+					<div class="panel-body">
+						<?php echo $ProblemData['Source']?>
+					</div>
 				</div>
+				<?php }?>
 
 
 				<center>
 					<div class="btn-group">
-						<button type="button" class="btn btn-default" id="btnShowSubmit" data-backdrop="static" data-toggle="modal"
-							data-target="#submitcode">提交代码</button>
-							<a type="button" class="btn btn-default" href=<?php echo '"/Contest/Status.php?ConID='.$ConID.'&Problem='.$ProEngNum[$NowProblem].'"';?>>查看记录</a>
+						<button type="button" class="btn btn-default" id="btnShowSubmit" data-backdrop="static"
+							data-toggle="modal" data-target="#submitcode">提交代码</button>
+						<a type="button" class="btn btn-default"
+							href=<?php echo '"/Contest/Status.php?ConID='.$ConID.'&Problem='.$ProEngNum[$NowProblem].'"';?>>查看记录</a>
 					</div>
 				</center>
+				</div>
 
 				<div class="modal fade" id="submitcode" tabindex="-1" role="dialog" aria-hidden="true">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<form onsubmit="return(pstsubmit());" action="/Contest/SubmitCode.php" method="post" target="myIframeSubCode">
+
 								<div class="modal-body" id="codemodalbody">
 									<textarea hidden name="code" id="codeeditor"></textarea>
 									<textarea hidden name="ConID" id="ConID"><?php echo $ConID?></textarea>
 									<textarea hidden name="NowPro" id="NowPro"><?php echo $NowProblem?></textarea>
 								</div>
+
 								<div class="modal-footer">
 									<div class="float-left">
 										语言：
 										<select name="language" id="language" style="height:32px;width:120px;">
 
-										<option value="gcc">gcc</option>
-										<option value="g++">g++</option>
-										<option value="C++">C++</option>
-										<option value="Java">Java</option>
-										<option value="Python">Python3.6</option>
+											<option value="Gcc">Gcc</option>
+											<option value="G++">G++</option>
+											<option value="C++">C++</option>
+											<option value="Java">Java</option>
+											<option value="Python">Python3.6</option>
 										</select>
-										<button id="SubmitCodeButton" type="submit" class="btn btn-primary">提交代码</button>
+										<button id="SubmitCodeButton" type="submit"
+											class="btn btn-primary">提交代码</button>
 									</div>
 									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 								</div>
 							</form>
+
 							<iframe id="myIframe" name="myIframeSubCode" style="display:none"></iframe>
+							
 						</div>
 					</div>
 				</div>

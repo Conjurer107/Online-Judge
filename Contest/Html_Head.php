@@ -37,11 +37,12 @@
 	}
 	
 	if($ConData['Show'] == 0 && ($User_Jurisdicton != JUR_ADMIN))
-  {
+	{
 		header('Location: /Message.php?Msg=比赛已被隐藏');
 		return;
 	}
 
+	//检查比赛是否需要密码进入
 	if($ConData['Type'] == 1 && $_SERVER['PHP_SELF'] != "/Contest/PassWord.php" && ($User_Jurisdicton != JUR_ADMIN))
 	{
 		if(isset($_SESSION['ConPassWord']))
@@ -59,6 +60,14 @@
 			return;
 		}
 	}
+	else if($_SERVER['PHP_SELF'] == "/Contest/PassWord.php")
+	{
+		if(($User_Jurisdicton == JUR_ADMIN) || (isset($_SESSION['ConPassWord']) && $_SESSION['ConPassWord'] == $ConData['PassWord']))
+		{
+			header('Location: /Contest/Pandect.php?ConID='.$ConID);
+			return;
+		}
+	}
 
 	$ProEngNum = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 	$NowDate = date('Y-m-d H:i:s');
@@ -66,21 +75,26 @@
 
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $WebHtmlTitle?></title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title><?php echo $WebHtmlTitle?></title>
+
 	<link href="/css/custom.css" rel="stylesheet">
 	<link href="/css/community.css" rel="stylesheet">
-    <script src="/js/jquery-1.11.1.min.js"></script>
+	<link href="/css/animate.min.css" rel="stylesheet">
+
+	<script src="/js/jquery-1.11.1.min.js"></script>
 	<script src="/js/jsencrypt.min.js"></script>
+
 	<script>
-	(function(){
-		var addcss=function(file){
-			document.write('<link href="'+file+'" rel="stylesheet">');
-		};
-		
-		<?php
+		(function () {
+			var addcss = function (file) {
+				document.write('<link href="' + file + '" rel="stylesheet">');
+			};
+
+			<?php
 			if(isset($LandUser))
 			{
 				echo "addcss('/css/bootstrap.".$Skin.".min.css');";
@@ -91,22 +105,20 @@
 			}
 			
 			?>
-		
-	})();
-	function RefreshPage()
-	{
+
+		})();
+
+		function RefreshPage() {
 			location.reload();
-	}
+		}
 
-	function GoHistoryPage()
-	{
+		function GoHistoryPage() {
 			history.go(-1);
-	}
+		}
 
 
-	function SkipPage(href)
-	{
-			 location.href = href; 
-	}
+		function SkipPage(href) {
+			location.href = href;
+		}
 	</script>
 </head>

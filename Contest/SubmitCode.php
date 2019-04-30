@@ -98,7 +98,7 @@
 		$CodeLen = mb_strlen($_POST["code"], "utf-8");
 		$NowTime = date('Y-m-d H:i:s');
 		//向数据库中插入状态
-		$sql = 'INSERT INTO oj_constatus(`RunID`, `ConID`, `User`, `Problem`, `Status`, `UseTime`, `UseMemory`, `Language`, `CodeLen`, `SubTime`, `AllStatus`, `Show`) values('.$RunID.', '.$_POST['ConID'].', "'.$LandUser.'", '.$_POST["NowPro"].', "Wating", -1, -1, "'.$_POST["language"].'", '.$CodeLen.', "'.$NowTime.'", " ", 1)';
+		$sql = 'INSERT INTO oj_constatus(`RunID`, `ConID`, `User`, `Problem`, `Status`, `UseTime`, `UseMemory`, `Language`, `CodeLen`, `SubTime`, `AllStatus`, `Show`) values('.$RunID.', '.$_POST['ConID'].', "'.$LandUser.'", '.$_POST["NowPro"].', '.Wating.', -1, -1, "'.$_POST["language"].'", '.$CodeLen.', "'.$NowTime.'", " ", 1)';
 		$result = mysql_query($sql);
 		
 		//更新运行ID

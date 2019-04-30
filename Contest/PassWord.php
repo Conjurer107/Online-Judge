@@ -14,7 +14,7 @@
             return;
         }
     ?>
-    <div class="container">
+    <div class="container animated fadeInLeft">
         <div class="panel panel-default">
             <div id="contesthead" class="panel-heading" style="padding:0 0 0 0;">
                 <ul class="nav nav-tabs" role="tablist">

@@ -67,7 +67,8 @@
 	{
 		if($_GET['Language'] != "")
 		{
-			$AddHref = $AddHref.'&Language='.$_GET['Language'];
+			$Language = str_replace("+","%2B", $_GET['Language']);
+			$AddHref = $AddHref.'&Language='.$Language;
 
 			if($AllCmd == "")
 				$AllCmd = ' where';
@@ -78,7 +79,20 @@
 		}
 	}
 	
-	if(array_key_exists('User', $_GET))
+	$OnlyMyself = false;
+	if($NowDate <= $ConData['OverTime'] && $User_Jurisdicton != JUR_ADMIN)
+	{
+		$OnlyMyself = true;
+
+		if($AllCmd == "")
+			$AllCmd = ' where';
+		else
+			$AllCmd = $AllCmd.' and';
+		
+		$AllCmd = $AllCmd.' `User`="'.$LandUser.'"';
+	}
+	
+	if(array_key_exists('User', $_GET) && !$OnlyMyself)
 	{
 		if($_GET['User'] != "")
 		{
@@ -93,41 +107,11 @@
 		}
 	}
 
-	$sql = "SELECT * FROM oj_constatus".$AllCmd;
-	$result = mysql_query($sql);
-
-    if(!$result)
-    {
-		header('Location: /Message.php?Msg=提交状态获取失败');
-		return;
-    }
-
-	$AllStatus = array();
-
-    while($row = mysql_fetch_array($result))
-    {
-		$AllStatus[]= array(
-			"RunID" => $row['RunID'],
-			"ConID" => $row['ConID'],
-            "User" => $row['User'],
-            "Problem" => $row['Problem'],
-            "Status" => $row['Status'],
-			"UseTime" => $row['UseTime'],
-			"UseMemory" => $row['UseMemory'],
-			"Language" => $row['Language'],
-			"CodeLen" => $row['CodeLen'],
-			"SubTime" => $row['SubTime'],
-			"AllStatus" => $row['AllStatus'],
-			"Show" => $row['Show']
-        );
-	}
-	
-	$clength = count($AllStatus);
-
-	//按运行ID排序
-	$arr1 = array_map(create_function('$n', 'return $n["RunID"];'), $AllStatus);
-	array_multisort($arr1, SORT_DESC, $AllStatus);
-
+	//获取状态数量
+	$sql = "SELECT count(*) as `value` FROM `oj_constatus` ".$AllCmd;
+    $rs = mysql_query($sql);
+    $StaCount = mysql_fetch_array($rs);
+    $clength = $StaCount['value'];
 	//获取当前页数
     $iPage = 1;
     if(array_key_exists('Page', $_GET))
@@ -195,7 +179,41 @@
             //结束显示的数字显示为最大值
             $EndButNum = $MaxPage;
         }
+	}
+	
+	$LimitShowSql = " ORDER BY `RunID` desc limit ".($iPage - 1) * MaxRankNum.", ".MaxRankNum;
+	$sql = "SELECT * FROM oj_constatus". $AllCmd . $LimitShowSql;
+	$result = mysql_query($sql);
+
+    if(!$result)
+    {
+		header('Location: /Message.php?Msg=提交状态获取失败');
+		return;
     }
+
+	$AllStatus = array();
+
+    while($row = mysql_fetch_array($result))
+    {
+		$AllStatus[]= array(
+			"RunID" => $row['RunID'],
+			"ConID" => $row['ConID'],
+            "User" => $row['User'],
+            "Problem" => $row['Problem'],
+            "Status" => $row['Status'],
+			"UseTime" => $row['UseTime'],
+			"UseMemory" => $row['UseMemory'],
+			"Language" => $row['Language'],
+			"CodeLen" => $row['CodeLen'],
+			"SubTime" => $row['SubTime'],
+			"AllStatus" => $row['AllStatus'],
+			"Show" => $row['Show']
+        );
+	}
+
+	//按运行ID排序
+	//$arr1 = array_map(create_function('$n', 'return $n["RunID"];'), $AllStatus);
+	//array_multisort($arr1, SORT_DESC, $AllStatus);
 	?>
 	<div class="container">
 		<div class="panel panel-default">
@@ -242,51 +260,50 @@
 				<?php
 					if($ConData['Rule'] == 'ACM' || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime'])
 					{
-						echo <<<STATUS
-						<span class="input-group-addon">评测结果</span>
-				<select name="Status" class="form-control">
-					<option value="">All</option>
+				?>
+					<span class="input-group-addon">评测结果</span>
 
-					<option value="Accepted">Accepted</option>
+					<select name="Status" class="form-control">
+						<option value=<?php echo Accepted;?>>Accepted</option>
+						<option value=<?php echo PresentationError;?>>Presentation Error</option>
+						<option value=<?php echo TimeLimitExceeded;?>>Time Limit Exceeded</option>
+						<option value=<?php echo MemoryLimitExceeded;?>>Memory Limit Exceeded</option>
+						<option value=<?php echo WrongAnswer;?>>Wrong Answer</option>
+						<option value=<?php echo RuntimeError;?>>Runtime Error</option>
+						<option value=<?php echo OutputLimitExceeded;?>>Output Limit Exceeded</option>
+						<option value=<?php echo CompileError;?>>Compile Error</option>
+						<option value=<?php echo SystemError;?>>System Error</option>
+					</select>
 
-					<option value="Presentation Error">Presentation Error</option>
-
-					<option value="Time Limit Exceeded">Time Limit Exceeded</option>
-
-					<option value="Memory Limit Exceeded">Memory Limit Exceeded</option>
-
-					<option value="Wrong Answer">Wrong Answer</option>
-
-					<option value="Runtime Error">Runtime Error</option>
-
-					<option value="Output Limit Exceeded">Output Limit Exceeded</option>
-
-					<option value="Compile Error">Compile Error</option>
-
-					<option value="System Error">System Error</option>
-				</select>
-STATUS;
+					<script language= JavaScript>
+     				document.getElementsByName("Status")[0].value = <? echo '"'.(isset($_GET['Status']) ? $_GET['Status'] : '').'"'?>;
+    				</script>
+				<?php
 					}
 				?>
 
 				<span class="input-group-addon">语言</span>
+
 				<select name="Language" class="form-control">
 					<option value="">All</option>
-
-					<option value="gcc">gcc</option>
-					<option value="g++">g++</option>
+					<option value="Gcc">Gcc</option>
+					<option value="G++">G++</option>
 					<option value="C++">C++</option>
 					<option value="Java">Java</option>
 					<option value="Python">Python3.6</option>
-
 				</select>
+
+				<script language= JavaScript>
+     				document.getElementsByName("Language")[0].value = <? echo '"'.(isset($_GET['Language']) ? $_GET['Language'] : '').'"'?>;
+    			</script>
+
 				<span class="input-group-btn">
 					<button class="btn btn-default">查询</button>
 				</span>
 			</div>
 		</form>
 
-				<div class="panel panel-default">
+				<div class="panel panel-default animated fadeInDown">
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr>
@@ -310,8 +327,12 @@ STATUS;
 						</thead>
 						<tbody>
 						<?php
-				for($i = $Rank; $i < $clength && $i <=  $iPage * MaxRankNum - 1 && $clength != 0; $i++)
+				for($i = 0; $i < MaxRankNum; $i++)
 				{
+					if(!isset($AllStatus[$i]['RunID']))
+                    {
+                        continue;
+                    }
 					if($ConData['Rule'] == 'OI' && ($User_Jurisdicton != JUR_ADMIN) && $NowDate <= $ConData['OverTime'])
 					{
 						$sql = "SELECT Fight FROM oj_user WHERE name='".$AllStatus[$i]['User']."'";
@@ -326,19 +347,20 @@ STATUS;
 							echo '<td>';
 							echo $AllStatus[$i]['RunID'];
 							echo ' &nbsp;';
-							echo '<a class="label label-warning" href="/Contest/AfreshEva.php?ConID='.$AllStatus[$i]['ConID'].'&ReEva='.$AllStatus[$i]['RunID'].'" target="myIframeNULL">重测</a>';
-
+							echo '<a class="label label-warning" href="/Contest/AfreshEva.php?ConID='.$AllStatus[$i]['ConID'].'&ReEva='.$AllStatus[$i]['RunID'].'" target="myIframeNull">重测</a>';
+							
+							echo ' <a class="label label-default" href="/Contest/ShowLog.php?ConID='.$AllStatus[$i]['ConID'].'&RunID='.$AllStatus[$i]['RunID'].'" >日志</a>';
 
 							if($AllStatus[$i]['Show'] == 1)
 							{
-								echo ' <a class="label label-primary" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNULL">隐藏</a>';
+								echo ' <a class="label label-primary" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNull">隐藏</a>';
 							}
 							else
 							{
-								echo ' <a class="label label-info" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNULL">显示</a>';
+								echo ' <a class="label label-info" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNull">显示</a>';
 							}
 						
-							echo '<iframe id="myIframe" name="myIframeNULL" style="display:none">隐藏</iframe>';
+							echo '<iframe id="myIframe" name="myIframeNull" style="display:none"></iframe>';
 							echo '</td>';
 						}
 						else
@@ -374,7 +396,7 @@ STATUS;
 					}
 					else
 					{
-						$sql = "SELECT Fight FROM oj_user WHERE name='".$AllStatus[$i]['User']."'";
+						$sql = "SELECT Fight FROM oj_user WHERE `name`='".$AllStatus[$i]['User']."'";
 						$result = mysql_query($sql);
 						$row = mysql_fetch_array($result);
 
@@ -386,19 +408,19 @@ STATUS;
 							echo '<td>';
 							echo $AllStatus[$i]['RunID'];
 							echo ' &nbsp;';
-							echo '<a class="label label-warning" href="/Contest/AfreshEva.php?ConID='.$AllStatus[$i]['ConID'].'&ReEva='.$AllStatus[$i]['RunID'].'" target="myIframeNULL">重测</a>';
-
+							echo '<a class="label label-warning" href="/Contest/AfreshEva.php?ConID='.$AllStatus[$i]['ConID'].'&ReEva='.$AllStatus[$i]['RunID'].'" target="myIframeNull">重测</a>';
+							echo ' <a class="label label-default" href="/Contest/ShowLog.php?ConID='.$AllStatus[$i]['ConID'].'&RunID='.$AllStatus[$i]['RunID'].'" >日志</a>';
 
 							if($AllStatus[$i]['Show'] == 1)
 							{
-								echo ' <a class="label label-primary" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNULL">隐藏</a>';
+								echo ' <a class="label label-primary" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNull">隐藏</a>';
 							}
 							else
 							{
-								echo ' <a class="label label-info" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNULL">显示</a>';
+								echo ' <a class="label label-info" href="/Contest/StatusShow.php?RunID='.$AllStatus[$i]['RunID'].'" target="myIframeNull">显示</a>';
 							}
 						
-							echo '<iframe id="myIframe" name="myIframeNULL" style="display:none">隐藏</iframe>';
+							echo '<iframe id="myIframe" name="myIframeNull" style="display:none">隐藏</iframe>';
 							echo '</td>';
 						}
 						else
@@ -415,10 +437,10 @@ STATUS;
 						echo '</td>';
 
 						echo '<td>';
-						if($AllStatus[$i]['Status'] == 'Running' || $AllStatus[$i]['Status'] == 'Compiling' || $AllStatus[$i]['Status'] == 'Wating' || $AllStatus[$i]['Status'] == 'Queuing')
-							echo '<a id="StatusTitle" data-content="点击刷新评测状态" class="label" href="javascript:location.reload();" data-status="'.$AllStatus[$i]['Status'].'">'.$AllStatus[$i]['Status'].'</a>';
-						else
-							echo '<a class="label" href="/Contest/Detail.php?ConID='.$AllStatus[$i]['ConID'].'&RunID='.$AllStatus[$i]['RunID'].'" data-status="'.$AllStatus[$i]['Status'].'">'.$AllStatus[$i]['Status'].'</a>';
+						//if($AllStatus[$i]['Status'] == 'Running' || $AllStatus[$i]['Status'] == 'Compiling' || $AllStatus[$i]['Status'] == 'Wating' || $AllStatus[$i]['Status'] == 'Queuing')
+							//echo '<a id="StatusTitle" data-content="点击刷新评测状态" class="label" href="javascript:location.reload();" data-status="'.$AllStatus[$i]['Status'].'">'.$AllStatus[$i]['Status'].'</a>';
+						//else
+						echo '<a class="label" href="/Contest/Detail.php?ConID='.$AllStatus[$i]['ConID'].'&RunID='.$AllStatus[$i]['RunID'].'" data-status="'.$AllStatusName[$AllStatus[$i]['Status']].'">'.$AllStatusCName[$AllStatus[$i]['Status']].' '.$AllStatusName[$AllStatus[$i]['Status']].'</a>';
 						echo '</td>';
 
 						echo '<td>';

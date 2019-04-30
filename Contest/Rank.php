@@ -47,13 +47,7 @@
 			<div class="panel-body">
 
 
-				<div class="panel panel-default">
-				<?php
-					if($ConData['Rule'] == 'OI')
-					{
-						echo '<h3 class="text-center">注意：OI赛制不实时显示排名</h3>';
-					}
-				?>
+				<div class="panel panel-default animated fadeInDown">
 					<table class="table table-striped table-hover text-center">
 						<?php 
 						if($ConData['Rule'] == 'ACM')

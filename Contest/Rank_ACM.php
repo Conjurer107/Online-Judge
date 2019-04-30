@@ -21,10 +21,10 @@
 			$iFirstAC = 0;
 
 			//获取参赛者错误提交信息
-			$sql = "SELECT count(*) as value FROM oj_constatus WHERE `Status`!='Accepted' and `Status`!='Compile Error' and `Show` = 1 and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."'";
+			$sql = "SELECT count(*) as value FROM oj_constatus WHERE `Status`!=".Accepted." and `Status`!=".CompileError." and `Show` = 1 and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."'";
     		if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
     		{
-        		$sql = "SELECT count(*) as value FROM oj_constatus WHERE `Status`!='Accepted' and `Status`!='Compile Error' and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."'";
+        		$sql = "SELECT count(*) as value FROM oj_constatus WHERE `Status`!=".Accepted." and `Status`!=".CompileError." and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."'";
 			}
 			$rs = mysql_query($sql);
 			$Num = mysql_fetch_array($rs);
@@ -33,19 +33,19 @@
 
 
 			//获取每一个提交信息
-			$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`='Accepted' and `Show` = 1 and `ConID`=".$ConID." and `Problem`=".$i."))";
+			$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`=".Accepted." and `Show` = 1 and `ConID`=".$ConID." and `Problem`=".$i."))";
     		if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
     		{
-				$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`='Accepted' and `ConID`=".$ConID." and `Problem`=".$i."))";
+				$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`=".Accepted." and `ConID`=".$ConID." and `Problem`=".$i."))";
 			}
 			$result = mysql_query($sql);
 			$FirstAC = mysql_fetch_array($result); 
 
 			//获取参赛者的AC提交信息
-			$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`='Accepted' and `Show` = 1 and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."') and `User`='".$var."')";
+			$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`=".Accepted." and `Show` = 1 and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."') and `User`='".$var."')";
     		if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
     		{
-				$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`='Accepted' and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."') and `User`='".$var."')";
+				$sql = "SELECT * FROM oj_constatus WHERE (SubTime=(select min(SubTime) from oj_constatus WHERE`Status`=".Accepted." and `ConID`=".$ConID." and `Problem`=".$i." and `User`='".$var."') and `User`='".$var."')";
 			}
 			$result = mysql_query($sql);
 			$IsAC = mysql_fetch_array($result); 
@@ -127,10 +127,10 @@
 		<?php
 			for($i = 0; $i < $ProNum; $i++)
 			{
-				$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = 'Accepted' and `Show` = 1 and `Problem` = ".$i;
+				$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = ".Accepted." and `Show` = 1 and `Problem` = ".$i;
 				if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 				{
-					$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = 'Accepted' and `Problem` = ".$i;
+					$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = ".Accepted." and `Problem` = ".$i;
 				}
               	$rs = mysql_query($sql);
 				$PassProNum = mysql_fetch_array($rs);

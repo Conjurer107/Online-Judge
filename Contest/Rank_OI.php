@@ -1,4 +1,10 @@
 <?php
+	if(($User_Jurisdicton != JUR_ADMIN) && ($NowDate <= $ConData['OverTime']))
+	{
+		echo '<h3 class="text-center">注意：OI赛制不实时显示排名</h3>';
+		return;
+	}
+	
 	$PeopleRank = array();
 
 	$AllPeople = $ConData['EnrollPeople'];
@@ -67,10 +73,10 @@
 		<?php
 			for($i = 0; $i < $ProNum; $i++)
 			{
-				$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = 'Accepted' and `Show` = 1 and `Problem` = ".$i;
+				$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = ".Accepted." and `Show` = 1 and `Problem` = ".$i;
 				if(isset($LandUser) && $User_Jurisdicton == JUR_ADMIN)
 				{
-					$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = 'Accepted' and `Problem` = ".$i;
+					$sql = "SELECT count(*) as value FROM oj_constatus where `ConID` = ".$ConID." and `Status` = ".Accepted." and `Problem` = ".$i;
 				}
               	$rs = mysql_query($sql);
 				$PassProNum = mysql_fetch_array($rs);
@@ -98,10 +104,6 @@
 
 		for($i=0; $i < $PeoNum; $i++)
 		{
-            if(($User_Jurisdicton != JUR_ADMIN) && ($NowDate <= $ConData['OverTime']))
-            {
-                break;
-            }
 			if(!$PeopleRank[$i]['User'])
 			{
 				continue;

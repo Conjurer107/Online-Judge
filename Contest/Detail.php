@@ -9,25 +9,9 @@
 	<?php
 		require_once("Header.php");
 
-	const Wating = 0;
-	const Queuing = 1;
-	const Compiling = 2;
-	const Running = 3;
-	const Accepted = 4;
-	const PresentationError = 5;
-	const TimeLimitExceeded = 6;
-	const MemoryLimitExceeded = 7;
-	const WrongAnswer = 8;
-	const RuntimeError = 9;
-	const OutputLimitExceeded = 10;
-	const CompileError = 11;
-	const SystemError = 12;
-
-	$AllStatusName = array("Wating", "Queuing", "Compiling", "Running", "Accepted", "Presentation Error", "Time Limit Exceeded", "Memory Limit Exceeded", "Wrong Answer", "Runtime Error", "Output Limit Exceeded", "Compile Error", "System Error");
-
 	$RunID = 0;
 	if(array_key_exists('RunID', $_GET))
-  	{
+  {
 		$RunID = $_GET['RunID'];
 
 		if($RunID > $JudgeMacRunID - 1)
@@ -90,22 +74,23 @@
 				<script src="/highlight/highlight.pack.js"></script>
 				<script>hljs.initHighlightingOnLoad("C", "C++", "Java", "Python");</script>
 
-				<h3>详细评测信息 ID: <?php echo $StatusData['RunID']?> &nbsp;&nbsp;评测机: SETIUO&nbsp;&nbsp;
+				<h3 class="animated fadeInRight">详细评测信息 ID: <?php echo $StatusData['RunID']?> &nbsp;&nbsp;评测机: <?php echo $StatusData['Judger']?>&nbsp;&nbsp;
 					<?php
 					if($User_Jurisdicton == JUR_ADMIN && isset($LandUser))
 					{
-						echo '<a class="label label-warning" href="/Contest/AfreshEva.php?ConID='.$ConID.'&ReEva='.$RunID.'" target="myIframeNULL">重测</a> ';
+						echo '<a class="label label-warning" href="/Contest/AfreshEva.php?ConID='.$ConID.'&ReEva='.$RunID.'" target="myIframeNull">重测</a> ';
+						echo ' <a class="label label-default" href="/Contest/ShowLog.php?ConID='.$ConID.'&RunID='.$RunID.'">日志</a> ';
 
 						if($StatusData['Show'] == 1)
 						{
-							echo ' <a class="label label-primary" href="/Contest/StatusShow.php?RunID='.$StatusData['RunID'].'" target="myIframeNULL">隐藏</a>';
+							echo ' <a class="label label-primary" href="/Contest/StatusShow.php?RunID='.$StatusData['RunID'].'" target="myIframeNull">隐藏</a>';
 						}
 						else
 						{
-							echo ' <a class="label label-info" href="/Contest/StatusShow.php?RunID='.$StatusData['RunID'].'" target="myIframeNULL">显示</a>';
+							echo ' <a class="label label-info" href="/Contest/StatusShow.php?RunID='.$StatusData['RunID'].'" target="myIframeNull">显示</a>';
 						}
 
-						echo '<iframe id="myIframe" name="myIframeNULL" style="display:none"></iframe>';
+						echo '<iframe id="myIframe" name="myIframeNull" style="display:none"></iframe>';
 					}
 				?>
 
@@ -147,10 +132,11 @@
 
 									if($ConData['Rule'] == 'ACM' || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime'])
 									{
-										if($StatusData['Status'] == 'Running' || $StatusData['Status'] == 'Compiling' || $StatusData['Status'] == 'Wating' || $StatusData['Status'] == 'Queuing')
-											echo '<a class="label" href="javascript:location.reload();" data-status="'.$StatusData['Status'].'">'.$StatusData['Status'].'</a>';
+										$iStatic = $StatusData['Status'];
+										if($iStatic == Running || $iStatic == Compiling || $iStatic == Wating || $iStatic == Queuing)
+											echo '<a id="StatusTitle" data-content="点击刷新评测状态" class="label" href="javascript:location.reload();" data-status="'.$AllStatusName[$iStatic].'">'.$AllStatusCName[$iStatic].' '.$AllStatusName[$iStatic].'</a>';
 										else
-											echo '<span class="label" data-status="'.$StatusData['Status'].'">'.$StatusData['Status'].'</span>';
+											echo '<span class="label" data-status="'.$AllStatusName[$iStatic].'">'.$AllStatusCName[$iStatic].' '.$AllStatusName[$iStatic].'</span>';
 									}
 									else
 									{
@@ -175,17 +161,13 @@
 						</tbody>
 					</table>
 				</div>
-				
-				<div class="panel panel-default">
 
-					<?php
-		if($StatusData['Status'] == 'Compile Error' && ($ConData['Rule'] == 'ACM' || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime']))
+					<?php				
+		if($StatusData['Status'] == CompileError && ($ConData['Rule'] == 'ACM' || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime']))
 		{
+			echo '<div class="panel panel-default animated fadeInDown">';
 			echo '<div class="panel-heading">编译错误信息</div>';
-			echo '<table class="table table-striped table-hover">';
-			echo '<thead>';
-			echo '<tr>';
-			echo '<th>';
+			echo '<div class="panel-body">';
 			$File_Path = '../Judge/Temporary_Error/'.$StatusData['RunID'].'.log';
 			if(file_exists($File_Path))
 			{
@@ -197,53 +179,66 @@
 					echo $str_encode . "<br/>";
 				}
 			}
-			//$str = file_get_contents($File_Path);
-			//$str = str_replace('\r', '<br/>', $str);
-			echo '</th>';
-			echo '</tr>';
-			echo '</thead>';
-			echo '</table>';
+			echo '</div>';
 			echo '</div>';
 		}
-		else if($ConData['Rule'] == 'ACM' || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime'])
+		else if(($ConData['Rule'] == 'ACM' && ($NowDate >= $ConData['OverTime'])) || ($User_Jurisdicton == JUR_ADMIN) || $NowDate >= $ConData['OverTime'])
 		{
-			echo '<div class="panel-heading">测试点详情</div>';
-			echo '<table class="table table-striped table-hover">';
-			echo '<thead>';
-			echo '<tr>';
-			echo '<th>测试点</th>';
-			echo '<th>评测结果</th>';
-			echo '<th>用时(ms)</th>';
-			echo '<th>内存(KB)</th>';
-			echo '<th>返回值</th>';
-			echo '</tr>';
-			echo '</thead>';
-			echo '<tbody>';
-
-			foreach($AllStatus as $val)
+			if($StatusData['Status'] != 'Wating' && $StatusData['Status'] != 'Queuing' && $StatusData['Status'] != 'Compiling' && $StatusData['Status'] != 'Running')
 			{
-					$iTest = explode("&", $val);
+				echo '<div class="panel panel-default animated fadeInDown">';
+				echo '<div class="panel-heading">测试点详情</div>';
+				echo '<table class="table table-striped table-hover">';
+				echo '<thead>';
+				echo '<tr>';
+				echo '<th>测试点</th>';
+				echo '<th>评测结果</th>';
+				echo '<th>用时(ms)</th>';
+				echo '<th>内存(KB)</th>';
+				echo '<th>返回值</th>';
+				echo '</tr>';
+				echo '</thead>';
+				echo '<tbody>';
 
-					if(count($iTest) == 5)
-					{
-						echo '<tr>';
-					echo '<td>#'.$iTest[0].'</td>';
-					echo '<td><span class="label" data-status="'.$AllStatusName[$iTest[1]].'">'.$AllStatusName[$iTest[1]].'</span></td>';
-					echo '<td>'.$iTest[2].'</td>';
-					echo '<td>'.$iTest[3].'</td>';
-					echo '<td>'.$iTest[4].'</td>';
-					echo '</tr>';
-					}
+				foreach($AllStatus as $val)
+				{
+						$iTest = explode("&", $val);
 
+						if(count($iTest) == 5)
+						{
+							echo '<tr>';
+							echo '<td>#'.$iTest[0];
+							if(($User_Jurisdicton == JUR_ADMIN || $User_Jurisdicton == JUR_ONLYVIEWDATA) && isset($LandUser))
+							{
+								$AllProblem = explode('|', $ConData['Problem']);
+								$ProNum = count($AllProblem);
+
+								if($iTest[0] < 10)
+									echo '&nbsp;&nbsp;&nbsp;';
+								else
+									echo '&nbsp;';
+
+								echo '<a class="label label-success" href="/ViewData_Def.php?Problem='.$AllProblem[$StatusData['Problem']].'&Data='.$iTest[0].'">数据</a>';
+							}
+							echo '</td>';
+
+							echo '<td><span class="label" data-status="'.$AllStatusName[$iTest[1]].'">'.$AllStatusName[$iTest[1]].' '.$AllStatusCName[$iTest[1]].'</span></td>';
+							echo '<td>'.$iTest[2].'</td>';
+							echo '<td>'.$iTest[3].'</td>';
+							echo '<td>'.$iTest[4].'</td>';
+							echo '</tr>';
+						}
+
+				}
+				echo '</tbody>';
+				echo '</table>';
+				echo '</div>';
 			}
-			echo '</tbody>';
-			echo '</table>';
-			echo '</div>';
 		}
 		?>
 
 
-<div class="panel panel-default">
+<div class="panel panel-default animated fadeInDown">
 			<div class="panel-heading">源代码</div>
 
 			<?php

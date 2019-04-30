@@ -10,7 +10,7 @@
 		}
 		else
 		{
-			$sql = "UPDATE `oj_constatus` SET `Status`='Wating' , `AllStatus`='', `UseTime`=-1 , `UseMemory`=-1 where `RunID`='".$_GET['ReEva']."'"; 
+			$sql = "UPDATE `oj_constatus` SET `Status`=".Wating." , `AllStatus`='', `UseTime`=-1 , `UseMemory`=-1 where `RunID`='".$_GET['ReEva']."'"; 
 			mysql_query($sql);
 
             //获取比赛提交状态的题号
