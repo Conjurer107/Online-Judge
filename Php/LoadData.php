@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-define("SQL_PASSWORD", "ieIAjVBw02");
+define("SQL_PASSWORD", "SqlPassword");
 
 function LoadData()
 {
